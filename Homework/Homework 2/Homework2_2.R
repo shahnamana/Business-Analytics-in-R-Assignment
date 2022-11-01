@@ -7,7 +7,7 @@ library(cluster) # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
 
 # Q1
-dungaree <- read.csv("dungaree.csv")
+dungaree <- read.csv("C:/Users/shahn/Documents/GitHub/Business-Analytics-in-R-Assignment/Homework/Homework 2/dungaree.csv")
 # dungaree
 summary(dungaree)
 # a) As the column name Store id is of no use we would drop it.
@@ -61,14 +61,14 @@ plot(c(0),
 axis(1, at = c(1:5), labels = names(dungaree))
 
 # plot centroids
-for (i in c(1:5)) {
-    lines(km6$centers[i, ], lty = i, lwd = 3, col = ifelse(i %in% c(1, 3, 5),
+for (i in c(1:6)) {
+    lines(km6$centers[i, ], lty = i, lwd = 3, col = ifelse(i %in% c(1, 3, 6),
         "black", "dark grey"
     ))
 }
 
 # name clusters
-text(x = 0.5, y = km6$centers[, 1], labels = paste("Cluster", c(1:5)))
+text(x = 0.5, y = km6$centers[, 1], labels = paste("Cluster", c(1:6)))
 
 # km6 centroids
 km6$centers
