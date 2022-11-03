@@ -23,11 +23,9 @@ sum(is.na(df))
 purchase <- df[, c(3,4,15)]
 colnames(purchase)
 #Create histogram of category of merchants and number of frauds
-ggplot(purchase, aes(x = category)) + geom_bar(aes(fill = is_fraud), position = "dodge") + theme_minimal() + labs(title = "Histogram of Category of Merchants and Number of Fraud", x = "Category", y = "Number of Fraud")
+ggplot(purchase, aes(x = category)) + geom_bar(aes(fill = is_fraud), position = "dodge") + theme(legend.position="none") + labs(title = "Quantity of Fraud per Type of Merchant", x = "Category of merchant", y = "Quantity of frauds")
 ##Create boxplot of category of merchants and amount involved in the fraud
-ggplot(purchase, aes(x = category, y = amt)) + geom_boxplot(aes(fill = is_fraud), position = "dodge") + theme_minimal() + labs(title = "Boxplot of Category of Merchants and Amount Involved in the Fraud", x = "Category", y = "Amount Involved in the Fraud")
-
-
+ggplot(purchase, aes(x = category, y = amt)) + geom_boxplot(aes(fill = is_fraud), position = "dodge") + theme(legend.position="none") + labs(title = "Amount Involved in the Fraud per Type of Merchant", x = "Category of merchant", y = "Amount involved in the fraud")
 
 ##Create histogram of age of customers and quantity of frauds
 
@@ -38,17 +36,11 @@ df$dob <- as.Date(df$dob)
 df$Age <- floor(as.numeric(difftime(Sys.Date(), df$dob, units = "days"))/365.25)
 age <- df[, c("Age", "is_fraud", 'amt')] # Selecting only the Age and is_fraud columns
 # Creating Bin for the Age Columns
-ggplot(age, aes(x = Age)) + geom_histogram(aes(fill = is_fraud), position = "dodge") + theme_minimal() + labs(title = "Histogram of Age of Customers and Quantity of Fraud", x = "Age", y = "Quantity of Fraud")
+ggplot(age, aes(x = Age)) + geom_histogram(binwidth = 5, aes(fill = is_fraud), colour = 4, fill = "white") + scale_x_continuous(breaks = seq(10,100,10)) + theme(legend.position="none") + labs(title = "Quantity of Fraud per Age of the Customers", x = "Age of the customers", y = "Quantity of frauds")
 
 
 ##Create scatterplot of age of customers and amount involved in the fraud
 new_df = filter(age, is_fraud == 1)
 age_bins = data.frame(df$Age, bin = cut(df$Age, c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), include.lowest = TRUE))
 
-ggplot(new_df, aes(x = Age, y = amt)) +
-    geom_histogram(aes(color = is_fraud)) +
-    theme_minimal() +
-    labs(title = "Scatterplot of Age of Customers and Amount Involved in the Fraud", x = "Age", y = "Amount Involved in the Fraud")
-
-barplot(table(new_df$Age, new_df$amt), main = "Barplot of Age of Customers and Quantity of Fraud", xlab = "Age", ylab = "Quantity of Fraud", col = c("red", "blue"))
-write_xlsx(df,"C:/Users/shahn/Desktop/hello.xlsx")
+ggplot(df, aes(x = Age, y = amt)) + geom_point(aes(color = is_fraud), colour = 4, fill = "white") + scale_x_continuous(breaks = seq(10,100,10)) + theme(legend.position="none") + labs(title = "Scatterplot of Age of Customers and Amount Involved in the Fraud", x = "Age", y = "Amount Involved in the Fraud")
