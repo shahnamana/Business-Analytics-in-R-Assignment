@@ -13,7 +13,8 @@ df <- read_csv('C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN
 
 ##Clean the data
 df <- subset(df, select = -c(...1, cc_num, first, last, gender, street, zip, unix_time))
-
+# Filtering only the fraud transactions
+df <- df %>% filter(is_fraud == 1)
 ##Summary
 summary(df)
 sum(is.na(df))
@@ -42,7 +43,7 @@ ggplot(age, aes(x = Age)) + geom_histogram(aes(fill = is_fraud), position = "dod
 
 ##Create scatterplot of age of customers and amount involved in the fraud
 new_df = filter(age, is_fraud == 1)
-age_bins = data.frame(new_df$Age, bin = cut(new_df$Age, c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), include.lowest = TRUE))
+age_bins = data.frame(df$Age, bin = cut(df$Age, c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), include.lowest = TRUE))
 
 ggplot(new_df, aes(x = Age, y = amt)) +
     geom_histogram(aes(color = is_fraud)) +
