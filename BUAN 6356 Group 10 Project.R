@@ -4,10 +4,12 @@ library(ggplot2)
 library(tidyverse)
 # install.packages("lubridate")
 #install.packages("eeptools")
+# install.packages("writexl")
 library(lubridate)
+library("writexl")
 
 library(eeptools)
-df <- read_csv('C:/Users/shahn/Documents/GitHub/Business-Analytics-in-R-Assignment/fraudTrain.csv', show_col_types = FALSE)
+df <- read_csv('C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTrain.csv', show_col_types = FALSE)
 
 ##Clean the data
 df <- subset(df, select = -c(...1, cc_num, first, last, gender, street, zip, unix_time))
@@ -33,11 +35,19 @@ df$dob <- as.Date(df$dob)
 
 # Getting age from DoB
 df$Age <- floor(as.numeric(difftime(Sys.Date(), df$dob, units = "days"))/365.25)
-age <- df[, c("Age", "is_fraud")] # Selecting only the Age and is_fraud columns
+age <- df[, c("Age", "is_fraud", 'amt')] # Selecting only the Age and is_fraud columns
 # Creating Bin for the Age Columns
-age_bins=data.frame(age$Age,bin=cut(age$Age,c(0,1,2,3,4,5,6,7,8,9),include.lowest=TRUE))
 ggplot(age, aes(x = Age)) + geom_histogram(aes(fill = is_fraud), position = "dodge") + theme_minimal() + labs(title = "Histogram of Age of Customers and Quantity of Fraud", x = "Age", y = "Quantity of Fraud")
 
 
 ##Create scatterplot of age of customers and amount involved in the fraud
-ggplot(df, aes(x = Age, y = amt)) + geom_point(aes(color = is_fraud)) + theme_minimal() + labs(title = "Scatterplot of Age of Customers and Amount Involved in the Fraud", x = "Age", y = "Amount Involved in the Fraud")
+new_df = filter(age, is_fraud == 1)
+age_bins = data.frame(new_df$Age, bin = cut(new_df$Age, c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), include.lowest = TRUE))
+
+ggplot(new_df, aes(x = Age, y = amt)) +
+    geom_histogram(aes(color = is_fraud)) +
+    theme_minimal() +
+    labs(title = "Scatterplot of Age of Customers and Amount Involved in the Fraud", x = "Age", y = "Amount Involved in the Fraud")
+
+barplot(table(new_df$Age, new_df$amt), main = "Barplot of Age of Customers and Quantity of Fraud", xlab = "Age", ylab = "Quantity of Fraud", col = c("red", "blue"))
+write_xlsx(df,"C:/Users/shahn/Desktop/hello.xlsx")
