@@ -70,6 +70,12 @@ head(mydata)
 
 
 
+# # Creating a decision tree model
+set.seed(1)
+dt <- rpart(is_fraud ~ ., data=mydata, method="class")
+dt
+
+
 
 # Developing a logistic regression model
 # training on mydata
@@ -97,12 +103,21 @@ test$gender <- sapply(test$gender, pm2)
 test_for_pred <- subset(test, select = -c(is_fraud))
 
 # predicting the test data
+
+# preicting values with decision tree ML Model
+pred <- predict(dt, test_for_pred, type = "class")
+
+# # predicting values with logstic regression ML Model
+
+# # specifying the threshold value for the link function
 # pred <- predict(model, test_for_pred, type = "class")
-first_row <- test[1,]
-first_row
-pred <- predict(model, test_for_pred, type = "link")
-# specifying the threshold value for the link function
-pred1 <- ifelse(pred > 26, 1, 0)
+# pred1 <- ifelse(pred > 26, 1, 0)
+
+
+head(pred)
 
 length(test$is_fraud[test$is_fraud == 1])
 length(pred1[pred1 == 1])
+
+# Creating a confusion matrix
+confusionMatrix(pred1, test$is_fraud)
