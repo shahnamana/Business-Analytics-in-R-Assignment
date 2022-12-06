@@ -2,24 +2,22 @@
 # install.packages("neuralnet")
 # install.packages("randomForest")
 
-library(randomForest)
-library(neuralnet)
+# library(randomForest)
+# library(neuralnet)
 library(aod)
 library(ggplot2)
+library(rpart)
+library(rpart.plot)
+library(caret)
+# library(ISLR)
+library(dplyr)
+library(tidyr)
 
-mydata <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTrain1.csv")
+mydata <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTrain1.csv", nrows=10000)
 ## view the first few rows of the data
-# head(mydata)
-# summary(mydata)
-# colnames(mydata)
 
-
-# # Creating a logistic regression model
-# model <- glm(is_fraud ~ ., data = mydata, family = binomial)
-# summary(model)
-
-
-
+mydata <- subset(mydata, select = c(-dob, -trans_num, -trans_date_trans_time))
+head(mydata)
 
 
 # Converting Categorical values to numerical labels
@@ -58,22 +56,39 @@ head(mydata)
 
 
 
-#  Crating a random forest model
+# #  Crating a random forest model
+# set.seed(1)
+# rf <- randomForest(is_fraud ~ ., data=mydata, ntree=1000, importance=TRUE)
+# rf
+
+# # plot the importance of each variable
+# varImpPlot(rf)
+
+# # Plotting the tree
+# plot(rf)
+
+
+
+
+
+# Developing a logistic regression model
+# training on mydata
 set.seed(1)
-rf <- randomForest(is_fraud ~ ., data=mydata, ntree=1000, importance=TRUE)
-rf
+# Creating the model
+model <- glm(is_fraud ~ ., data = mydata, family = binomial)
+summary(model)
 
-# plot the importance of each variable
-varImpPlot(rf)
-
-# Plotting the tree
-plot(rf)
 
 
 
 ## Testing the model on Test Dataset 
 # reading test data
-test <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTest1.csv")
+test <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTest11.csv", nrows = 3000)
+
+test <- subset(test, select = c(-dob, -trans_num, -trans_date_trans_time))
+head(test)
+
+
 # Using the same labels which were used in Training data
 test$category <- sapply(test$category, pm1)
 test$gender <- sapply(test$gender, pm2)
@@ -82,8 +97,12 @@ test$gender <- sapply(test$gender, pm2)
 test_for_pred <- subset(test, select = -c(is_fraud))
 
 # predicting the test data
-pred <- predict(rf, test_for_pred, type = "class")
+# pred <- predict(model, test_for_pred, type = "class")
+first_row <- test[1,]
+first_row
+pred <- predict(model, test_for_pred, type = "link")
+# specifying the threshold value for the link function
+pred1 <- ifelse(pred > 26, 1, 0)
 
-# printing the confusion matrix
-table(pred, test$is_fraud)
-confusionMatrix(pred, test$is_fraud)
+length(test$is_fraud[test$is_fraud == 1])
+length(pred1[pred1 == 1])
