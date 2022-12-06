@@ -2,14 +2,11 @@
 # install.packages("neuralnet")
 # install.packages("randomForest")
 
-# library(randomForest)
-# library(neuralnet)
 library(aod)
 library(ggplot2)
 library(rpart)
 library(rpart.plot)
 library(caret)
-# library(ISLR)
 library(dplyr)
 library(tidyr)
 
@@ -38,38 +35,6 @@ mydata$gender <- sapply(mydata$gender, pm2)
 head(mydata)
 
 
-# # Creating a neural network model with 1 hidden layer and logistic regression
-# set.seed(1)
-# nn <- neuralnet(is_fraud ~ ., data=mydata, hidden=3, linear.output=FALSE, act.fct="logistic")
-
-# # display weights
-# nn$weights
-
-# # display predictions
-# prediction(nn)
-
-# # plot network
-# plot(nn, rep="best")
-
-
-
-
-
-
-# #  Crating a random forest model
-# set.seed(1)
-# rf <- randomForest(is_fraud ~ ., data=mydata, ntree=1000, importance=TRUE)
-# rf
-
-# # plot the importance of each variable
-# varImpPlot(rf)
-
-# # Plotting the tree
-# plot(rf)
-
-
-
-
 # # Creating a decision tree model
 set.seed(1)
 dt <- rpart(is_fraud ~ ., data=mydata, method="class")
@@ -94,7 +59,6 @@ test <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BU
 test <- subset(test, select = c(-dob, -trans_num, -trans_date_trans_time))
 head(test)
 
-
 # Using the same labels which were used in Training data
 test$category <- sapply(test$category, pm1)
 test$gender <- sapply(test$gender, pm2)
@@ -111,6 +75,9 @@ pred <- predict(dt, test_for_pred, type = "class")
 
 # # specifying the threshold value for the link function
 pred1 <- predict(model, test_for_pred, type = "response")
+# here we use the cutoff value as .04 as the training dataset has a lot of values which are nto fraud.
+# Because of which more data will be incorrectly classified as fraud.
+# to test this further we try to increase the test data to check if the cutoff value remains the same or not.
 pred1 <- ifelse(pred1 > .04, 1, 0)
 
 
