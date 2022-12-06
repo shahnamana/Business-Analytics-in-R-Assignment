@@ -13,7 +13,7 @@ library(caret)
 library(dplyr)
 library(tidyr)
 
-mydata <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTrain1.csv", nrows=10000)
+mydata <- read.csv("C:/Users/shahn/OneDrive - The University of Texas at Dallas/BUAN 6359 Business Analytics with R Zhe Zang/Group Project/archive/fraudTrain1.csv")
 ## view the first few rows of the data
 
 mydata <- subset(mydata, select = c(-dob, -trans_num, -trans_date_trans_time))
@@ -110,14 +110,16 @@ pred <- predict(dt, test_for_pred, type = "class")
 # # predicting values with logstic regression ML Model
 
 # # specifying the threshold value for the link function
-# pred <- predict(model, test_for_pred, type = "class")
-# pred1 <- ifelse(pred > 26, 1, 0)
+pred1 <- predict(model, test_for_pred, type = "response")
+pred1 <- ifelse(pred1 > .04, 1, 0)
 
 
 head(pred)
 
 length(test$is_fraud[test$is_fraud == 1])
-length(pred1[pred1 == 1])
+length(pred[pred == 1])
 
+# Prediction by logistic regression model
+length(pred1[pred1 == 1])
 # Creating a confusion matrix
 confusionMatrix(pred1, test$is_fraud)
