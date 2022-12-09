@@ -49,7 +49,10 @@ set.seed(1)
 model <- glm(is_fraud ~ ., data = mydata, family = binomial)
 summary(model)
 
-
+# plotting the decision tree model
+options(scipen=5)
+rpart.plot(dt, type = 4, extra = 1, under = TRUE, faclen = 0)
+# prp(dt)
 
 
 ## Testing the model on Test Dataset 
